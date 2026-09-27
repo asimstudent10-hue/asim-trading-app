@@ -22,7 +22,27 @@ jobs:
       - name: Install EAS
         run: npm install -g eas-cli
 
-      - name: Build APK
+      - name: Create EAS config
+        run: |
+          cat > eas.json <<'EOF'
+          {
+            "build": {
+              "preview": {
+                "distribution": "internal",
+                "android": {
+                  "buildType": "apk"
+                }
+              }
+            }
+          }
+          EOF
+
+      - name: Link Expo project
         run: eas init --account asimstudent1476 --force --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK
+        run: eas build --platform android --profile preview --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
